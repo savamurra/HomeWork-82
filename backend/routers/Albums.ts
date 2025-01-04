@@ -5,15 +5,42 @@ import {Album} from "../models/Album";
 import {Artist} from "../models/Artist";
 
 
+
 export const albumRouter = express.Router();
 
 albumRouter.get('/', async (req, res, next) => {
+    const artist_id = req.query.artist as string;
     try {
-        const result = await Album.find();
-        if (result.length === 0) {
+        if (artist_id) {
+            const result = await Album.find({artist: artist_id});
+            if (!result) {
+                res.status(404).send({error: "No such artist found"});
+            } else {
+                res.send(result);
+            }
+        } else {
+            const result = await Album.find();
+            if (result.length === 0) {
+                res.status(400).send('Albums not found');
+            } else {
+                res.status(200).send(result);
+            }
+        }
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+albumRouter.get('/:id', async (req, res, next) => {
+    const id = req.params.id;
+    try {
+        const result = await Album.findById({_id: id});
+        if (!result) {
             res.status(400).send('Albums not found');
         } else {
-            res.status(200).send(result);
+            const artist = await Artist.findById({_id: result.artist})
+            res.status(200).send([result, artist]);
         }
     } catch (error) {
         next(error);

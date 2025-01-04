@@ -3,7 +3,6 @@ import {ArtistWithoutId} from "../types";
 import {Artist} from "../models/Artist";
 import {imagesUpload} from "../multer";
 
-
 export const artistRouter = express.Router();
 
 artistRouter.get('/', async (req, res, next) => {
