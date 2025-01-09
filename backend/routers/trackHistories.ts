@@ -1,7 +1,6 @@
 import express from "express";
 import User from "../models/User";
 import TrackHistory from "../models/TrackHistory";
-import {TrackHistoryFields} from "../types";
 import {Track} from "../models/Track";
 
 const trackHistory = express.Router();
