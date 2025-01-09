@@ -24,3 +24,15 @@ export interface Track {
 }
 
 export type TrackWithoutId = Omit<Track, '_id'>;
+
+export interface UserFields {
+    username: string;
+    password: string;
+    token: string;
+}
+
+export interface TrackHistoryFields {
+    user: string;
+    track: string;
+    datetime: string
+}
