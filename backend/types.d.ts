@@ -10,7 +10,7 @@ export type ArtistWithoutId = Omit<Artist, '_id'>
 export interface Album {
     title: string;
     artist: string;
-    releaseDate: string;
+    releaseDate: number;
     image: string | null;
     _id: string;
 }
@@ -19,7 +19,7 @@ export type AlbumWithoutId = Omit<Album, '_id'>;
 export interface Track {
     title: string;
     album: string;
-    duration: string;
+    duration: number;
     _id: string;
     numberOfTracks: number;
 }

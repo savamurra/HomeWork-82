@@ -16,8 +16,13 @@ const TrackSchema = new Schema({
     duration: {
         type: Number,
         required: true,
+    },
+    numberOfTracks: {
+        type: Number,
+        required: true,
     }
-})
+});
+
 
 export const Track = mongoose.model('Track', TrackSchema);
 

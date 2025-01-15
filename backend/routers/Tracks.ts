@@ -13,10 +13,12 @@ trackRouter.get('/', async (req, res, next) => {
     try {
         if (album_id) {
             const result = await Track.find({album: album_id});
+            const album = await Album.findById(album_id);
+            const artist = await Artist.findById(album?.artist);
             if (!result) {
                 res.status(404).send({error: "No such track found"});
             } else {
-                res.send(result);
+                res.send({results: result, album: album, artist: artist});
             }
         } else {
             const result = await Track.find();
@@ -70,6 +72,7 @@ trackRouter.post('/', async (req, res, next) => {
         title: req.body.title,
         album: req.body.album,
         duration: req.body.duration,
+        numberOfTracks: req.body.numberOfTracks,
     }
 
     try {
