@@ -14,7 +14,7 @@ const AlbumSchema = new Schema({
         required: [true, 'Artist is required'],
     },
     releaseDate: {
-        type: String,
+        type: Number,
         required: true,
     },
     image: String,

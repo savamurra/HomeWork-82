@@ -21,6 +21,7 @@ export interface Track {
     album: string;
     duration: string;
     _id: string;
+    numberOfTracks: number;
 }
 
 export type TrackWithoutId = Omit<Track, '_id'>;
