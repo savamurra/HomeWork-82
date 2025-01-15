@@ -13,6 +13,7 @@ export interface Album {
     releaseDate: number;
     image: string | null;
     _id: string;
+    trackCount: number;
 }
 
 export interface AlbumResponse {
