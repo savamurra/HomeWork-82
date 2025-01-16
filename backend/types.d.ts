@@ -1,22 +1,23 @@
-export interface Artist {
+export interface IArtist {
     name: string;
     photo: string | null;
     info: string;
     _id: string;
 }
 
-export type ArtistWithoutId = Omit<Artist, '_id'>
+export type ArtistWithoutId = Omit<IArtist, '_id'>
 
-export interface Album {
+export interface IAlbum {
     title: string;
     artist: string;
     releaseDate: number;
     image: string | null;
     _id: string;
+    trackCount: number;
 }
-export type AlbumWithoutId = Omit<Album, '_id'>;
+export type AlbumWithoutId = Omit<IAlbum, '_id'>;
 
-export interface Track {
+export interface ITrack {
     title: string;
     album: string;
     duration: number;
@@ -24,7 +25,7 @@ export interface Track {
     numberOfTracks: number;
 }
 
-export type TrackWithoutId = Omit<Track, '_id'>;
+export type TrackWithoutId = Omit<ITrack, '_id'>;
 
 export interface UserFields {
     username: string;

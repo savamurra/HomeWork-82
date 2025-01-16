@@ -37,7 +37,7 @@ const run = async () => {
             image: 'fixtures/skyfall.jpeg',
         },
         {
-            title: "Sky falls-2",
+            title: "Jujutsu Kaisen",
             artist: artist[0]._id,
             releaseDate: 2006,
             image: 'fixtures/skyfall2.jpeg',

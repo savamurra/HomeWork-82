@@ -3,6 +3,7 @@ import {TrackWithoutId} from "../types";
 import {Track} from "../models/Track";
 import {Album} from "../models/Album";
 import {Artist} from "../models/Artist";
+import {Error} from "mongoose";
 
 
 export const trackRouter = express.Router();
@@ -12,7 +13,7 @@ trackRouter.get('/', async (req, res, next) => {
 
     try {
         if (album_id) {
-            const result = await Track.find({album: album_id});
+            const result = await Track.find({album: album_id}).sort({ numberOfTracks: 1 });
             const album = await Album.findById(album_id);
             const artist = await Artist.findById(album?.artist);
             if (!result) {
@@ -80,6 +81,10 @@ trackRouter.post('/', async (req, res, next) => {
         await track.save();
         res.send(track);
     } catch (err) {
+        if (err instanceof Error.ValidationError) {
+            res.status(400).send(err);
+            return;
+        }
         next(err);
     }
 });

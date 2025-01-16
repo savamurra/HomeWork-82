@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import {ITrack} from "../types";
+
 
 const Schema = mongoose.Schema;
 
@@ -7,6 +9,15 @@ const TrackSchema = new Schema({
         type: String,
         required: true,
         unique: true,
+        validate: [
+            {
+                validator: async (value: string): Promise<boolean> => {
+                    const track: ITrack | null = await Track.findOne({title: value});
+                    return !track;
+                },
+                message: "Track title already exists"
+            },
+        ]
     },
     album: {
         type: Schema.Types.ObjectId,

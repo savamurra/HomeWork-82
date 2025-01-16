@@ -2,6 +2,7 @@ import express from "express";
 import {ArtistWithoutId} from "../types";
 import {Artist} from "../models/Artist";
 import {imagesUpload} from "../multer";
+import {Error} from "mongoose";
 
 export const artistRouter = express.Router();
 
@@ -18,7 +19,7 @@ artistRouter.get('/', async (req, res, next) => {
     }
 });
 
-artistRouter.post('/', imagesUpload.single('photo'),async (req, res, next) => {
+artistRouter.post('/', imagesUpload.single('photo'), async (req, res, next) => {
     if (!req.body.name) {
         res.status(400).send({"error": "Please enter a name"});
         return;
@@ -35,6 +36,10 @@ artistRouter.post('/', imagesUpload.single('photo'),async (req, res, next) => {
         await artist.save();
         res.send(artist);
     } catch (err) {
+        if (err instanceof Error.ValidationError) {
+            res.status(400).send(err);
+            return;
+        }
         next(err);
     }
 });

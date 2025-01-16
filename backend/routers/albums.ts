@@ -3,7 +3,8 @@ import {AlbumWithoutId} from "../types";
 import {imagesUpload} from "../multer";
 import {Album} from "../models/Album";
 import {Artist} from "../models/Artist";
-
+import {Error} from "mongoose";
+import {Track} from "../models/Track";
 
 
 export const albumRouter = express.Router();
@@ -12,11 +13,22 @@ albumRouter.get('/', async (req, res, next) => {
     const artist_id = req.query.artist as string;
     try {
         if (artist_id) {
-            const result = await Album.find({artist: artist_id});
+            const result = await Album.find({ artist: artist_id }).sort({ releaseDate: - 1 });
+
+            const albumsTracker = []
+
+            for (const album of result) {
+                const trackCount = await Track.countDocuments({ album: album._id });
+                albumsTracker.push({
+                    ...album.toObject(),
+                    trackCount: trackCount
+                });
+            }
+            const artist = await Artist.findById(artist_id);
             if (!result) {
                 res.status(404).send({error: "No such artist found"});
             } else {
-                res.send(result);
+                res.send({results: albumsTracker, artist: artist});
             }
         } else {
             const result = await Album.find();
@@ -58,7 +70,7 @@ albumRouter.post('/', imagesUpload.single('image'),async (req, res, next) => {
         if (!artist) res.status(400).send("Not found artist");
     }
 
-    const newAlbum: AlbumWithoutId  = {
+    const newAlbum  = {
         title: req.body.title,
         artist: req.body.artist,
         releaseDate: req.body.releaseDate,
@@ -70,6 +82,10 @@ albumRouter.post('/', imagesUpload.single('image'),async (req, res, next) => {
         await album.save();
         res.send(album);
     } catch (err) {
+        if (err instanceof Error.ValidationError) {
+            res.status(400).send(err);
+            return;
+        }
         next(err);
     }
 });

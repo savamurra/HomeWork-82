@@ -1,9 +1,9 @@
 import express from "express";
 import mongoose from "mongoose";
 import mongoDb from "./mongoDb";
-import {artistRouter} from "./routers/Artists";
-import {albumRouter} from "./routers/Albums";
-import {trackRouter} from "./routers/Tracks";
+import {artistRouter} from "./routers/artists";
+import {albumRouter} from "./routers/albums";
+import {trackRouter} from "./routers/tracks";
 import userRouter from "./routers/user";
 import trackHistory from "./routers/trackHistories";
 const cors = require('cors');
@@ -13,6 +13,7 @@ const port = 8000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static("public"));
 
 
 app.use('/artists', artistRouter);

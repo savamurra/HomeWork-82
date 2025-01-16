@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import {IArtist} from "../types";
+
 
 const Schema = mongoose.Schema;
 
@@ -7,8 +9,20 @@ const ArtistSchema = new Schema({
         type: String,
         required: true,
         unique: true,
+        validate: [
+            {
+                validator: async (value: string): Promise<boolean> => {
+                    const artist: IArtist | null = await Artist.findOne({name: value});
+                    return !artist;
+                },
+                message: "Artist already exists"
+            },
+        ]
     },
-    photo: String,
+    photo: {
+        type: String,
+        default: null,
+    },
     info: String,
 })
 
