@@ -1,22 +1,29 @@
-import { Box, Card, CardContent, Typography } from "@mui/material";
+import {Box, Button, Card, CardContent, Typography} from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {selectLoading, selectTrack} from "./trackSlice";
 import { getTrackThunks } from "./trackThunks";
 import Spinner from "../../components/UI/Spinner/Spinner.tsx";
+import {selectUser} from "../users/userSlice.ts";
+import {listenMusic} from "../trackHistory/trackHistoryThunks.ts";
+
+
 
 const Tracks = () => {
     const dispatch = useAppDispatch();
     const { results: tracks, album , artist} = useAppSelector(selectTrack);
     const loading = useAppSelector(selectLoading);
     const { id } = useParams<{ id: string }>();
+    const user = useAppSelector(selectUser);
+
 
     useEffect(() => {
         if (id) {
             dispatch(getTrackThunks(id));
         }
     }, [dispatch, id]);
+
 
     return (
         <>
@@ -50,6 +57,21 @@ const Tracks = () => {
                                     <strong>Number of Tracks:</strong> {track.numberOfTracks}
                                 </Typography>
                             </CardContent>
+                            {user ? (
+                                <Button
+                                    sx={{ margin: 'auto', display: 'block' }}
+                                    onClick={() =>
+                                        dispatch(
+                                            listenMusic({
+                                                user: user._id,
+                                                track: track._id,
+                                            })
+                                        )
+                                    }
+                                >
+                                    Play
+                                </Button>
+                            ) : null}
                         </Card>
                     ))
                 ) : (

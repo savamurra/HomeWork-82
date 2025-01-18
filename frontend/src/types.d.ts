@@ -57,6 +57,14 @@ export interface User {
     token: string;
 }
 
+export interface TrackHistoryFields {
+    user: string;
+    track: string;
+    datetime: string
+}
+
+export type TrackHistoryWithoutDateTime = Omit<TrackHistoryFields, 'datetime'>;
+
 export interface RegisterResponse {
     user: User;
     message: string;
