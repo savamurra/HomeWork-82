@@ -18,7 +18,7 @@ const TrackHistory = () => {
     const navigate = useNavigate();
 
     if (!user) {
-        navigate('/')
+        navigate('/login')
     }
 
     useEffect(() => {

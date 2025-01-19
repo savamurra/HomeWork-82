@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAppDispatch } from '../../../app/hooks.ts';
 import { unsetUser } from '../../../features/users/userSlice.ts';
 import { logout } from '../../../features/users/userThunks.ts';
+import {clearTrackHistory} from "../../../features/trackHistory/trackHistorySlice.ts";
 
 interface Props {
   user: User;
@@ -24,6 +25,7 @@ const UserMenu: React.FC<Props> = ({user}) => {
   const handleLogout =  () => {
     dispatch(logout());
     dispatch(unsetUser());
+    dispatch(clearTrackHistory());
   }
   return (
     <>

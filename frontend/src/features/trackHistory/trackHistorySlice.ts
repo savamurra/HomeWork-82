@@ -20,7 +20,11 @@ export const selectGetLoading = (state: RootState) => state.trackHistory.getLoad
 export const trackHistorySlice = createSlice({
     name: 'trackHistory',
     initialState,
-    reducers: {},
+    reducers: {
+        clearTrackHistory: (state) => {
+            state.trackHistory = []
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(listenMusic.pending, (state) => {
@@ -44,5 +48,7 @@ export const trackHistorySlice = createSlice({
             });
     }
 });
+
+export const {clearTrackHistory} = trackHistorySlice.actions;
 
 export const trackHistoryReducer = trackHistorySlice.reducer;

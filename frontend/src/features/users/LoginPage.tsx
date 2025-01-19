@@ -13,7 +13,8 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
 import { selectLoginError } from './userSlice.ts';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { login } from './userThunks.ts';
-import { Alert } from '@mui/material';
+import {Alert, IconButton, InputAdornment} from '@mui/material';
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 
 const RegisterPage = () => {
@@ -21,6 +22,7 @@ const RegisterPage = () => {
     username: '',
     password: '',
   });
+  const [password, setPassword] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
   const loginError = useAppSelector(selectLoginError);
@@ -37,7 +39,9 @@ const RegisterPage = () => {
     navigate('/');
   }
 
-
+  const hiddenPassword = () => {
+    setPassword(!password);
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -80,10 +84,23 @@ const RegisterPage = () => {
                 fullWidth
                 name="password"
                 label="Password"
-                type="password"
+                type={password ? 'text' : 'password'}
                 id="password"
                 value={form.password}
                 onChange={inputChange}
+                InputProps={{
+                  endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                            onClick={() => hiddenPassword()}
+                            edge="end"
+                            aria-label="toggle password visibility"
+                        >
+                          {password ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      </InputAdornment>
+                  ),
+                }}
               />
             </Grid>
           </Grid>
