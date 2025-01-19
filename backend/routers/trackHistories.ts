@@ -51,7 +51,7 @@ trackHistory.get("/", auth, async (req, res, next) => {
     const user = (req as RequestWithUser).user
 
     try {
-        const history = await TrackHistory.find({user: user._id}).sort({datetime: -1}).populate('track', 'title').populate('artist', 'name');
+        const history = await TrackHistory.find({user: user._id}).sort({datetime: -1}).populate('track', 'title').populate('artist', 'name photo');
 
         if (history.length === 0) {
             res.status(400).send('Track history not found');

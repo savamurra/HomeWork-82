@@ -5,8 +5,6 @@ export interface Artist {
     _id: string;
 }
 
-export type ArtistWithoutId = Omit<Artist, '_id'>
-
 export interface Album {
     title: string;
     artist: string;
@@ -21,8 +19,6 @@ export interface AlbumResponse {
     artist: Artist;
 }
 
-export type AlbumWithoutId = Omit<Album, '_id'>;
-
 export interface Track {
     title: string;
     album: string;
@@ -36,10 +32,6 @@ export interface TrackResponse {
     album: Album;
     artist: Artist;
 }
-
-export type TrackWithoutId = Omit<Track, '_id'>;
-
-
 
 export interface RegisterMutation {
     username: string;
@@ -59,11 +51,15 @@ export interface User {
 
 export interface TrackHistoryFields {
     user: string;
-    track: string;
+    artist: {
+        name: string;
+        photo: string;
+    };
+    track: {
+        title: string
+    };
     datetime: string
 }
-
-export type TrackHistoryWithoutDateTime = Omit<TrackHistoryFields, 'datetime'>;
 
 export interface RegisterResponse {
     user: User;

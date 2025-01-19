@@ -1,10 +1,68 @@
+import {Box, Card, CardContent, CardMedia, Typography} from "@mui/material";
+import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
+import {selectGetLoading, selectTrackHistory} from "./trackHistorySlice.ts";
+import {useEffect} from "react";
+import {getMusicHistory} from "./trackHistoryThunks.ts";
+import Spinner from "../../components/UI/Spinner/Spinner.tsx";
+import {apiUrl} from "../../globalConstants.ts";
+import {selectUser} from "../users/userSlice.ts";
+import {useNavigate} from "react-router-dom";
+import dayjs from "dayjs";
 
 
 const TrackHistory = () => {
-    return (
-        <div>
+    const dispatch = useAppDispatch();
+    const history = useAppSelector(selectTrackHistory);
+    const loading = useAppSelector(selectGetLoading);
+    const user = useAppSelector(selectUser);
+    const navigate = useNavigate();
 
-        </div>
+    if (!user) {
+        navigate('/')
+    }
+
+    useEffect(() => {
+        dispatch(getMusicHistory())
+    }, [dispatch]);
+    return (
+        <>
+            {user ? (
+                loading ? (
+                    <Spinner />
+                ) : (
+                    <Box sx={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                        {history.map((item) => {
+                            const image = item.artist.photo
+                                ? apiUrl + '/' + item.artist.photo
+                                : 'https://mui.com/static/images/cards/contemplative-reptile.jpg';
+
+                            return (
+                                <Card sx={{ maxWidth: 345 }} key={item.user}>
+                                    <CardMedia
+                                        component="img"
+                                        alt={item.artist.name || "Artist Image"}
+                                        height="140"
+                                        image={image}
+                                    />
+                                    <CardContent>
+                                        <Typography gutterBottom variant="h5" component="div">
+                                            {item.artist.name}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                            Title: {item.track.title}
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                            Date of listening: {dayjs(item.datetime).format('MMM-DD HH:mm:ss')}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
+                    </Box>
+                )
+            ) : null}
+
+        </>
     );
 };
 

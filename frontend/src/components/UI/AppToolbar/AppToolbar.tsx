@@ -1,6 +1,6 @@
-import { AppBar, styled, Toolbar, Typography } from '@mui/material';
+import {AppBar, Button, styled, Toolbar, Typography} from '@mui/material';
 import { Link as NavLink } from "react-router-dom";
-import { useAppSelector } from '../../../app/hooks.ts';
+import { useAppSelector} from '../../../app/hooks.ts';
 import { selectUser } from '../../../features/users/userSlice.ts';
 import AnonymousMenu from './AnonymousMenu.tsx';
 import UserMenu from './UserMenu.tsx';
@@ -21,10 +21,8 @@ const AppToolbar = () => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           <Link to="/">Spotify</Link>
         </Typography>
-
+        {user ? <Button component={NavLink} to='trackHistory' color='inherit' sx={{mr: 4}}>Track History</Button> : null}
         {user ? <UserMenu user={user}/> :  <AnonymousMenu/>}
-
-
       </Toolbar>
     </AppBar>
   );
