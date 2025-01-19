@@ -31,7 +31,11 @@ const TrackSchema = new Schema({
     numberOfTracks: {
         type: Number,
         required: true,
-    }
+    },
+    youtubeLink: {
+        type: String,
+        default: null
+    },
 });
 
 

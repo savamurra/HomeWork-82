@@ -23,6 +23,7 @@ export interface ITrack {
     duration: number;
     _id: string;
     numberOfTracks: number;
+    youtubeLink: string;
 }
 
 export type TrackWithoutId = Omit<ITrack, '_id'>;

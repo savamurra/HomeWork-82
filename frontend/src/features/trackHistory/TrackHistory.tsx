@@ -28,16 +28,16 @@ const TrackHistory = () => {
         <>
             {user ? (
                 loading ? (
-                    <Spinner />
+                    <Spinner/>
                 ) : (
-                    <Box sx={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
-                        {history.map((item) => {
+                    <Box sx={{display: 'flex', gap: 5, flexWrap: 'wrap'}}>
+                        {history.length > 0 ? history.map((item) => {
                             const image = item.artist.photo
                                 ? apiUrl + '/' + item.artist.photo
                                 : 'https://mui.com/static/images/cards/contemplative-reptile.jpg';
 
                             return (
-                                <Card sx={{ maxWidth: 345 }} key={item.user}>
+                                <Card sx={{maxWidth: 345}} key={crypto.randomUUID()}>
                                     <CardMedia
                                         component="img"
                                         alt={item.artist.name || "Artist Image"}
@@ -48,16 +48,20 @@ const TrackHistory = () => {
                                         <Typography gutterBottom variant="h5" component="div">
                                             {item.artist.name}
                                         </Typography>
-                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                        <Typography variant="body2" sx={{color: 'text.secondary'}}>
                                             Title: {item.track.title}
                                         </Typography>
-                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                        <Typography variant="body2" sx={{color: 'text.secondary'}}>
                                             Date of listening: {dayjs(item.datetime).format('MMM-DD HH:mm:ss')}
                                         </Typography>
                                     </CardContent>
                                 </Card>
                             );
-                        })}
+                        }) : (
+                            <Typography variant="h6" sx={{width: '100%', textAlign: 'center'}}>
+                                No listening history available.
+                            </Typography>
+                        )}
                     </Box>
                 )
             ) : null}

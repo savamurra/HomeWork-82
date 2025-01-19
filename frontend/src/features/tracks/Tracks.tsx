@@ -7,10 +7,13 @@ import {getTrackThunks} from "./trackThunks";
 import Spinner from "../../components/UI/Spinner/Spinner.tsx";
 import {selectUser} from "../users/userSlice.ts";
 import {listenMusic} from "../trackHistory/trackHistoryThunks.ts";
+import {Modal} from "@mui/material";
 
 
 const Tracks = () => {
     const [createDisabled, setCreateDisabled] = useState<string | null>(null);
+    const [openModal, setOpenModal] = useState<boolean>(false);
+    const [youtube, setYouTube] = useState<string | null>(null);
     const dispatch = useAppDispatch();
     const {results: tracks, album, artist} = useAppSelector(selectTrack);
     const loading = useAppSelector(selectLoading);
@@ -26,9 +29,24 @@ const Tracks = () => {
 
 
     const onClick = async (trackId: string) => {
+        const track = tracks.find((t) => t._id === trackId);
+
+        if (!track) return;
         setCreateDisabled(trackId);
-        await dispatch(listenMusic({track: trackId}))
+        if (track.youtubeLink) {
+            setYouTube(track.youtubeLink);
+            setOpenModal(true);
+        } else {
+            alert("No YouTube link available for this track.");
+        }
+        await dispatch(listenMusic({track: trackId}));
+
         setCreateDisabled(null);
+    };
+
+    const closeModal = () => {
+        setOpenModal(false);
+        setYouTube(null);
     };
 
     return (
@@ -78,6 +96,44 @@ const Tracks = () => {
                             <Typography>No tracks available.</Typography>
                         )}
                     </Box>
+                    <Modal
+                        open={openModal}
+                        onClose={closeModal}
+                        aria-labelledby="youtube-modal-title"
+                        aria-describedby="youtube-modal-description"
+                    >
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                bgcolor: 'background.paper',
+                                boxShadow: 24,
+                                p: 2,
+                                maxWidth: 800,
+                                width: '90%',
+                                outline: 'none',
+                            }}
+                        >
+                            <Typography id="youtube-modal-title" variant="h6" component="h2" sx={{mb: 2}}>
+                                YouTube Player
+                            </Typography>
+                            {youtube && (
+                                <iframe
+                                    width="100%"
+                                    height="400"
+                                    src={youtube.replace("watch?v=", "embed/")}
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                />
+                            )}
+                            <Button onClick={closeModal} sx={{mt: 2}}>
+                                Close
+                            </Button>
+                        </Box>
+                    </Modal>
                 </>
             )}
         </>

@@ -13,6 +13,14 @@ trackHistory.post("/", auth, async (req, res, next) => {
         const user = (req as RequestWithUser).user;
         const trackId = req.body.track;
 
+        const existingHistory = await TrackHistory.findOne({track: trackId});
+
+        if (existingHistory) {
+            existingHistory.datetime = new Date().toISOString();
+            res.status(200).send(existingHistory);
+            return
+        }
+
         if (!trackId) {
             res.status(400).send({error: "Track ID is required"});
             return

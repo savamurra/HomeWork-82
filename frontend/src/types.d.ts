@@ -25,6 +25,7 @@ export interface Track {
     duration: number;
     _id: string;
     numberOfTracks: number;
+    youtubeLink: string;
 }
 
 export interface TrackResponse {
