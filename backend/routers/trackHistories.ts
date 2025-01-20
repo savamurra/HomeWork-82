@@ -17,6 +17,7 @@ trackHistory.post("/", auth, async (req, res, next) => {
 
         if (existingHistory) {
             existingHistory.datetime = new Date().toISOString();
+            existingHistory.save();
             res.status(200).send(existingHistory);
             return
         }
