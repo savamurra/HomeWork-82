@@ -3,6 +3,7 @@ export interface IArtist {
     photo: string | null;
     info: string;
     _id: string;
+    isPublished: boolean;
 }
 
 export type ArtistWithoutId = Omit<IArtist, '_id'>
@@ -14,6 +15,7 @@ export interface IAlbum {
     image: string | null;
     _id: string;
     trackCount: number;
+    isPublished: boolean;
 }
 export type AlbumWithoutId = Omit<IAlbum, '_id'>;
 
@@ -24,6 +26,7 @@ export interface ITrack {
     _id: string;
     numberOfTracks: number;
     youtubeLink: string;
+    isPublished: boolean;
 }
 
 export type TrackWithoutId = Omit<ITrack, '_id'>;
@@ -32,10 +35,6 @@ export interface UserFields {
     username: string;
     password: string;
     token: string;
-}
-
-export interface TrackHistoryFields {
-    user: string;
-    track: string;
-    datetime: string
+    role: string;
+    isPublished: boolean;
 }
