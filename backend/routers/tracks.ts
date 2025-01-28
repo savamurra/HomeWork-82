@@ -8,7 +8,6 @@ import auth, {RequestWithUser} from "../middleware/auth";
 import permit from "../middleware/permit";
 
 
-
 export const trackRouter = express.Router();
 
 trackRouter.get('/', async (req, res, next) => {
@@ -16,7 +15,7 @@ trackRouter.get('/', async (req, res, next) => {
 
     try {
         if (album_id) {
-            const result = await Track.find({album: album_id}).sort({ numberOfTracks: 1 });
+            const result = await Track.find({album: album_id}).sort({numberOfTracks: 1});
             const album = await Album.findById(album_id);
             const artist = await Artist.findById(album?.artist);
             if (!result) {
@@ -61,7 +60,7 @@ trackRouter.get('/:id', async (req, res, next) => {
     }
 });
 
-trackRouter.post('/', auth, permit('user','admin'),async (req, res, next) => {
+trackRouter.post('/', auth, permit('user', 'admin'), async (req, res, next) => {
     if (!req.body.title) {
         res.status(400).send({"error": "Please enter a title"});
         return;
@@ -90,6 +89,29 @@ trackRouter.post('/', auth, permit('user','admin'),async (req, res, next) => {
             return;
         }
         next(err);
+    }
+});
+
+trackRouter.patch('/:id/togglePublished', auth, permit('admin',), async (req, res, next) => {
+    const id = req.params.id;
+    try {
+        const track = await Track.findOne({_id: id});
+
+
+        if (!track) {
+            res.status(403).send({error: 'No track found with this id'});
+        }
+
+
+        const updateTrack = await Track.findOneAndUpdate(
+            {_id: id},
+            {isPublished: !track?.isPublished},
+            {new: true}
+        );
+
+        res.send({message: 'isPublished updated successfully', updateTrack});
+    } catch (e) {
+        next(e);
     }
 });
 

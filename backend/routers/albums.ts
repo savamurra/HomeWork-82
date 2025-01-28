@@ -14,12 +14,12 @@ albumRouter.get('/', async (req, res, next) => {
     const artist_id = req.query.artist as string;
     try {
         if (artist_id) {
-            const result = await Album.find({ artist: artist_id }).sort({ releaseDate: - 1 });
+            const result = await Album.find({artist: artist_id}).sort({releaseDate: -1});
 
             const albumsTracker = []
 
             for (const album of result) {
-                const trackCount = await Track.countDocuments({ album: album._id });
+                const trackCount = await Track.countDocuments({album: album._id});
                 albumsTracker.push({
                     ...album.toObject(),
                     trackCount: trackCount
@@ -60,7 +60,30 @@ albumRouter.get('/:id', async (req, res, next) => {
     }
 });
 
-albumRouter.post('/', imagesUpload.single('image'),auth, permit('user','admin'),async (req, res, next) => {
+albumRouter.patch('/:id/togglePublished', auth, permit('admin',), async (req, res, next) => {
+    const id = req.params.id;
+    try {
+        const album = await Album.findOne({_id: id});
+
+
+        if (!album) {
+            res.status(403).send({error: 'No album found with this id'});
+        }
+
+
+        const updateAlbum = await Album.findOneAndUpdate(
+            {_id: id},
+            {isPublished: !album?.isPublished},
+            {new: true}
+        );
+
+        res.send({message: 'isPublished updated successfully', updateAlbum});
+    } catch (e) {
+        next(e);
+    }
+});
+
+albumRouter.post('/', imagesUpload.single('image'), auth, permit('user', 'admin'), async (req, res, next) => {
     const expressReq = req as RequestWithUser;
 
     const user = expressReq.user;
@@ -75,7 +98,7 @@ albumRouter.post('/', imagesUpload.single('image'),auth, permit('user','admin'),
         if (!artist) res.status(400).send("Not found artist");
     }
 
-    const newAlbum  = {
+    const newAlbum = {
         title: req.body.title,
         artist: req.body.artist,
         releaseDate: req.body.releaseDate,
@@ -96,7 +119,7 @@ albumRouter.post('/', imagesUpload.single('image'),auth, permit('user','admin'),
     }
 });
 
-albumRouter.delete('/:id',auth, permit('admin','user'), async (req, res, next) => {
+albumRouter.delete('/:id', auth, permit('admin', 'user'), async (req, res, next) => {
     const expressReq = req as RequestWithUser;
 
     const user = expressReq.user;
@@ -127,8 +150,7 @@ albumRouter.delete('/:id',auth, permit('admin','user'), async (req, res, next) =
                 }
             }
         }
-    } catch (e)  {
+    } catch (e) {
         next(e);
     }
-
-})
+});

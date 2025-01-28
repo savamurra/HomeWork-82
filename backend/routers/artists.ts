@@ -48,6 +48,29 @@ artistRouter.post('/', imagesUpload.single('photo'), auth, permit('user', 'admin
     }
 });
 
+artistRouter.patch('/:id/togglePublished', auth, permit('admin',), async (req, res, next) => {
+    const id = req.params.id;
+    try {
+        const artist = await Artist.findOne({_id: id});
+
+
+        if (!artist) {
+            res.status(403).send({error: 'No artist found with this id'});
+        }
+
+
+        const updateArtist = await Artist.findOneAndUpdate(
+            {_id: id},
+            {isPublished: !artist?.isPublished},
+            {new: true}
+        );
+
+        res.send({message: 'isPublished updated successfully',updateArtist});
+    } catch (e) {
+        next(e);
+    }
+});
+
 artistRouter.delete('/:id', auth, permit('admin', 'user'), async (req, res, next) => {
     const expressReq = req as RequestWithUser;
 
