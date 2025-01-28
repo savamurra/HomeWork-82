@@ -1,10 +1,11 @@
 import express from "express";
-import {AlbumWithoutId} from "../types";
 import {imagesUpload} from "../multer";
 import {Album} from "../models/Album";
 import {Artist} from "../models/Artist";
 import {Error} from "mongoose";
 import {Track} from "../models/Track";
+import auth, {RequestWithUser} from "../middleware/auth";
+import permit from "../middleware/permit";
 
 
 export const albumRouter = express.Router();
@@ -59,7 +60,11 @@ albumRouter.get('/:id', async (req, res, next) => {
     }
 });
 
-albumRouter.post('/', imagesUpload.single('image'),async (req, res, next) => {
+albumRouter.post('/', imagesUpload.single('image'),auth, permit('user','admin'),async (req, res, next) => {
+    const expressReq = req as RequestWithUser;
+
+    const user = expressReq.user;
+
     if (!req.body.title || !req.body.releaseDate) {
         res.status(400).send({"error": "Please enter a name, albumId and releaseDate"});
         return;
@@ -75,6 +80,7 @@ albumRouter.post('/', imagesUpload.single('image'),async (req, res, next) => {
         artist: req.body.artist,
         releaseDate: req.body.releaseDate,
         image: req.file ? 'images' + req.file.filename : null,
+        user: user._id
     }
 
     try {
@@ -89,3 +95,40 @@ albumRouter.post('/', imagesUpload.single('image'),async (req, res, next) => {
         next(err);
     }
 });
+
+albumRouter.delete('/:id',auth, permit('admin','user'), async (req, res, next) => {
+    const expressReq = req as RequestWithUser;
+
+    const user = expressReq.user;
+
+    const id = req.params.id;
+
+    try {
+        const currentAlbum = await Album.findById(id);
+        if (!currentAlbum) {
+            res.status(404).send({error: "Albums not found"});
+            return;
+        }
+
+        if (user.role === 'admin') {
+            const album = await Album.findByIdAndDelete(id);
+            res.send({message: "Album deleted successfully.", album});
+        } else if (user.role === 'user') {
+            if (currentAlbum) {
+                if (currentAlbum.user.toString() !== user._id.toString()) {
+                    res.status(403).send({error: "You can not delete someone else's album"});
+                    return;
+                } else if (currentAlbum.isPublished === false) {
+                    const album = await Album.findByIdAndDelete(id);
+                    res.send({message: "Album deleted successfully.", album});
+                } else {
+                    res.status(403).send({error: "You can't delete an album if it's published."});
+                    return;
+                }
+            }
+        }
+    } catch (e)  {
+        next(e);
+    }
+
+})

@@ -4,6 +4,9 @@ import {Track} from "../models/Track";
 import {Album} from "../models/Album";
 import {Artist} from "../models/Artist";
 import {Error} from "mongoose";
+import auth, {RequestWithUser} from "../middleware/auth";
+import permit from "../middleware/permit";
+
 
 
 export const trackRouter = express.Router();
@@ -58,7 +61,7 @@ trackRouter.get('/:id', async (req, res, next) => {
     }
 });
 
-trackRouter.post('/', async (req, res, next) => {
+trackRouter.post('/', auth, permit('user','admin'),async (req, res, next) => {
     if (!req.body.title) {
         res.status(400).send({"error": "Please enter a title"});
         return;
@@ -87,5 +90,41 @@ trackRouter.post('/', async (req, res, next) => {
             return;
         }
         next(err);
+    }
+});
+
+trackRouter.delete('/:id', auth, permit('admin', 'user'), async (req, res, next) => {
+    const expressReq = req as RequestWithUser;
+
+    const user = expressReq.user;
+
+    const id = req.params.id;
+
+    try {
+        const currentTrack = await Artist.findById(id);
+        if (!currentTrack) {
+            res.status(404).send({error: "Track not found"});
+            return;
+        }
+
+        if (user.role === 'admin') {
+            const track = await Artist.findByIdAndDelete(id);
+            res.send({message: "Track deleted successfully.", track});
+        } else if (user.role === 'user') {
+            if (currentTrack) {
+                if (currentTrack.user.toString() !== user._id.toString()) {
+                    res.status(403).send({error: "You can not delete someone else's track"});
+                    return;
+                } else if (currentTrack.isPublished === false) {
+                    const track = await Album.findByIdAndDelete(id);
+                    res.send({message: "Track deleted successfully.", track});
+                } else {
+                    res.status(403).send({error: "You can't delete an track if it's published."});
+                    return;
+                }
+            }
+        }
+    } catch (e) {
+        next(e);
     }
 });

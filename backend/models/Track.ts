@@ -36,6 +36,15 @@ const TrackSchema = new Schema({
         type: String,
         default: null
     },
+    isPublished: {
+        type: Boolean,
+        default: false,
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    }
 });
 
 

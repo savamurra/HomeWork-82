@@ -6,7 +6,7 @@ export interface IArtist {
     isPublished: boolean;
 }
 
-export type ArtistWithoutId = Omit<IArtist, '_id'>
+export type ArtistWithoutId = Omit<IArtist, '_id','isPublished'>
 
 export interface IAlbum {
     title: string;
@@ -17,7 +17,7 @@ export interface IAlbum {
     trackCount: number;
     isPublished: boolean;
 }
-export type AlbumWithoutId = Omit<IAlbum, '_id'>;
+export type AlbumWithoutId = Omit<IAlbum, '_id','isPublished'>;
 
 export interface ITrack {
     title: string;
@@ -29,7 +29,7 @@ export interface ITrack {
     isPublished: boolean;
 }
 
-export type TrackWithoutId = Omit<ITrack, '_id'>;
+export type TrackWithoutId = Omit<ITrack, '_id','isPublished'>;
 
 export interface UserFields {
     username: string;

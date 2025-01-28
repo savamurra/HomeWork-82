@@ -33,6 +33,15 @@ const AlbumSchema = new Schema({
         default: null,
     },
     trackCount: Number,
+    isPublished: {
+        type: Boolean,
+        default: false,
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
 })
 
 export const Album = mongoose.model('Album', AlbumSchema);

@@ -24,6 +24,15 @@ const ArtistSchema = new Schema({
         default: null,
     },
     info: String,
+    isPublished: {
+        type: Boolean,
+        default: false,
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    }
 })
 
 export const Artist = mongoose.model('Artist', ArtistSchema);
