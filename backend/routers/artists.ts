@@ -24,6 +24,10 @@ artistRouter.get('/', async (req, res, next) => {
 });
 
 artistRouter.post('/', imagesUpload.single('photo'), auth, permit('user', 'admin'), async (req, res, next) => {
+    const expressReq = req as RequestWithUser;
+
+    const user = expressReq.user;
+
     if (!req.body.name) {
         res.status(400).send({"error": "Please enter a name"});
         return;
@@ -33,6 +37,7 @@ artistRouter.post('/', imagesUpload.single('photo'), auth, permit('user', 'admin
         name: req.body.name,
         photo: req.file ? 'images' + req.file.filename : null,
         info: req.body.info,
+        user: user._id,
     }
 
     try {

@@ -17,7 +17,6 @@ export interface IAlbum {
     trackCount: number;
     isPublished: boolean;
 }
-export type AlbumWithoutId = Omit<IAlbum, '_id','isPublished'>;
 
 export interface ITrack {
     title: string;
@@ -27,6 +26,7 @@ export interface ITrack {
     numberOfTracks: number;
     youtubeLink: string;
     isPublished: boolean;
+    user: string;
 }
 
 export type TrackWithoutId = Omit<ITrack, '_id','isPublished'>;

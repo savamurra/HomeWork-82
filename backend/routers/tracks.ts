@@ -61,6 +61,10 @@ trackRouter.get('/:id', async (req, res, next) => {
 });
 
 trackRouter.post('/', auth, permit('user', 'admin'), async (req, res, next) => {
+    const expressReq = req as RequestWithUser;
+
+    const user = expressReq.user;
+
     if (!req.body.title) {
         res.status(400).send({"error": "Please enter a title"});
         return;
@@ -77,6 +81,7 @@ trackRouter.post('/', auth, permit('user', 'admin'), async (req, res, next) => {
         duration: req.body.duration,
         numberOfTracks: req.body.numberOfTracks,
         youtubeLink: req.body.youtubeLink,
+        user: user._id,
     }
 
     try {
