@@ -1,11 +1,11 @@
 import {Box, Button, Card, CardActions, CardContent, CardMedia, Typography} from "@mui/material";
-import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
-import {selectArtist, selectLoading} from "./artistSlice.ts";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks.ts";
+import {selectArtist, selectLoading} from "../artistSlice.ts";
 import {useEffect} from "react";
-import {getArtistThunks} from "./artistThunks.ts";
-import {apiUrl} from "../../globalConstants.ts";
+import {getArtistThunks} from "../artistThunks.ts";
+import {apiUrl} from "../../../globalConstants.ts";
 import {NavLink} from "react-router-dom";
-import Spinner from "../../components/UI/Spinner/Spinner.tsx";
+import Spinner from "../../../components/UI/Spinner/Spinner.tsx";
 
 const Artists = () => {
     const dispatch = useAppDispatch();

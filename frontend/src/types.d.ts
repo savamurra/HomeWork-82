@@ -1,8 +1,17 @@
 export interface Artist {
     name: string;
-    photo: string | null;
+    photo: File | null;
     info: string;
     _id: string;
+    user: string,
+    isPublished: boolean;
+}
+
+export interface ArtistMutation {
+    name: string;
+    photo: File | null;
+    info: string;
+    user: string,
 }
 
 export interface Album {
@@ -48,6 +57,7 @@ export interface User {
     _id: string;
     username: string;
     token: string;
+    role: string;
 }
 
 export interface TrackHistoryFields {
