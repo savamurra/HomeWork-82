@@ -21,7 +21,7 @@ const AppToolbar = () => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           <Link to="/">Spotify</Link>
         </Typography>
-        {user ? <Button component={NavLink} to='trackHistory' color='inherit' sx={{mr: 4}}>Track History</Button> : null}
+        {user ? <Button component={NavLink} to='trackHistory' color='inherit'>Track History</Button> : null}
         {user ? <UserMenu user={user}/> :  <AnonymousMenu/>}
       </Toolbar>
     </AppBar>

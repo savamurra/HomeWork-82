@@ -41,7 +41,8 @@ const TrackHistory = () => {
                                     <CardMedia
                                         component="img"
                                         alt={item.artist.name || "Artist Image"}
-                                        height="140"
+                                        width="100%"
+                                        height="250px"
                                         image={image}
                                     />
                                     <CardContent>

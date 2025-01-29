@@ -52,9 +52,9 @@ const UserMenu: React.FC<Props> = ({user}) => {
                 keepMounted
                 open={Boolean(secondAnchorEl)}
                 onClose={formClose}>
-                <MenuItem>Track</MenuItem>
+                <MenuItem component={NavLink} to='track/new'>Track</MenuItem>
                 <MenuItem component={NavLink} to='artist/new'>Artist</MenuItem>
-                <MenuItem>Album</MenuItem>
+                <MenuItem component={NavLink} to='album/new'>Album</MenuItem>
             </Menu>
 
             <Button
