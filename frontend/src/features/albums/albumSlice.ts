@@ -28,7 +28,7 @@ const initialState: AlbumSlice = {
 export const selectAlbum = (state: RootState) => state.albums.albums;
 export const selectLoading = (state: RootState) => state.albums.isLoading;
 export const selectCreateLoading = (state: RootState) => state.albums.isCreate;
-
+export const selectDelete = (state: RootState) => state.albums.isDelete;
 
 export const albumSlice = createSlice({
     name: 'albums',

@@ -6,6 +6,7 @@ import {Artist} from "../models/Artist";
 import {Error} from "mongoose";
 import auth, {RequestWithUser} from "../middleware/auth";
 import permit from "../middleware/permit";
+import TrackHistory from "../models/TrackHistory";
 
 
 export const trackRouter = express.Router();
@@ -128,14 +129,15 @@ trackRouter.delete('/:id', auth, permit('admin', 'user'), async (req, res, next)
     const id = req.params.id;
 
     try {
-        const currentTrack = await Artist.findById(id);
+        const currentTrack = await Track.findById(id);
         if (!currentTrack) {
             res.status(404).send({error: "Track not found"});
             return;
         }
 
         if (user.role === 'admin') {
-            const track = await Artist.findByIdAndDelete(id);
+            const track = await Track.findByIdAndDelete(id);
+            await TrackHistory.findOneAndDelete({track: id})
             res.send({message: "Track deleted successfully.", track});
         } else if (user.role === 'user') {
             if (currentTrack) {
@@ -143,7 +145,8 @@ trackRouter.delete('/:id', auth, permit('admin', 'user'), async (req, res, next)
                     res.status(403).send({error: "You can not delete someone else's track"});
                     return;
                 } else if (currentTrack.isPublished === false) {
-                    const track = await Album.findByIdAndDelete(id);
+                    const track = await Track.findByIdAndDelete(id);
+                    await TrackHistory.findOneAndDelete({track: id})
                     res.send({message: "Track deleted successfully.", track});
                 } else {
                     res.status(403).send({error: "You can't delete an track if it's published."});

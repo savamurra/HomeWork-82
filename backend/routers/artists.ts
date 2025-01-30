@@ -5,7 +5,6 @@ import {imagesUpload} from "../multer";
 import {Error} from "mongoose";
 import auth, {RequestWithUser} from "../middleware/auth";
 import permit from "../middleware/permit";
-import {Album} from "../models/Album";
 
 
 export const artistRouter = express.Router();
@@ -99,7 +98,7 @@ artistRouter.delete('/:id', auth, permit('admin', 'user'), async (req, res, next
                     res.status(403).send({error: "You can not delete someone else's artist"});
                     return;
                 } else if (currentArtist.isPublished === false) {
-                    const artist = await Album.findByIdAndDelete(id);
+                    const artist = await Artist.findByIdAndDelete(id);
                     res.send({message: "Artist deleted successfully.", artist});
                 } else {
                     res.status(403).send({error: "You can't delete an artist if it's published."});

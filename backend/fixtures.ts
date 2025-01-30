@@ -90,10 +90,10 @@ const run = async () => {
         },
         {
             title: "Forest is deep",
-            artist: thirdArtist._id,
+            artist: secondArtist._id,
             releaseDate: 2005,
             image: 'fixtures/forest.jpeg',
-            user: thirdUser._id,
+            user: secondUser._id,
             isPublished: true,
         },
         {

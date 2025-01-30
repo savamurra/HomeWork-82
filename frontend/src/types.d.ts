@@ -21,7 +21,18 @@ export interface Album {
     image: string | null;
     _id: string;
     trackCount: number;
+    isPublished: boolean;
+    user: string;
 }
+
+export interface AlbumMutation {
+    title: string;
+    artist: string;
+    image: File | null;
+    releaseDate: string;
+    user: string;
+}
+
 
 export interface AlbumResponse {
     results: Album[];
@@ -33,6 +44,17 @@ export interface Track {
     album: string;
     duration: number;
     _id: string;
+    numberOfTracks: number;
+    youtubeLink: string;
+    isPublished: boolean;
+    user: string;
+}
+
+export interface TrackMutation {
+    title: string;
+    album: string;
+    artist: string;
+    duration: number;
     numberOfTracks: number;
     youtubeLink: string;
 }

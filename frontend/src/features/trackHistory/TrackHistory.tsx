@@ -20,6 +20,7 @@ const TrackHistory = () => {
     if (!user) {
         navigate('/login')
     }
+    console.log(history)
 
     useEffect(() => {
         dispatch(getMusicHistory())

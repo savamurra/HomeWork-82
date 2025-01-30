@@ -3,7 +3,7 @@ import {useAppDispatch, useAppSelector} from "../../../app/hooks.ts";
 import {useEffect} from "react";
 import {apiUrl} from "../../../globalConstants.ts";
 import {deleteAlbumThunks, getAlbumsThunks, publishAlbumThunks} from "../albumThunks.ts";
-import {removeAlbum, selectAlbum, updateStatus} from "../albumSlice.ts";
+import {removeAlbum, selectAlbum, selectDelete, updateStatus} from "../albumSlice.ts";
 import {NavLink, useParams} from "react-router-dom";
 import {selectLoading} from "../albumSlice.ts";
 import Spinner from "../../../components/UI/Spinner/Spinner.tsx";
@@ -16,6 +16,7 @@ const Artists = () => {
     const loading = useAppSelector(selectLoading);
     const user = useAppSelector(selectUser);
     const {id} = useParams<{ id: string }>();
+    const deleteLoading = useAppSelector(selectDelete);
 
     useEffect(() => {
         if (id) {
@@ -62,56 +63,65 @@ const Artists = () => {
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 5 }}>
                         {Array.isArray(albums) && albums.length > 0 ? (
                             albums.map((item) => {
+
                                 const image = item.image ? apiUrl + '/' + item.image :
                                     'https://mui.com/static/images/cards/contemplative-reptile.jpg';
-
+                                const allAlbum = user?.role === "admin" || user?.role === "user" && item.user === user._id || item.isPublished;
+                                const deleteForAdmin = user?.role === 'admin' || user?.role === "user" && item.user === user._id;
                                 return (
-                                    <Card sx={{
-                                        width: 305,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                    }} key={item._id}>
-                                        <CardMedia
-                                            component="img"
-                                            alt={item.title || "Artist Image"}
-                                            width="100%"
-                                            height="250px"
-                                            image={image}
-                                        />
-                                        <CardContent sx={{flexGrow: 1}}>
-                                            <Typography gutterBottom variant="h5" component="div">
-                                                {item.title}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                Release: {item.releaseDate}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                Count of tracks: {item.trackCount}
-                                            </Typography>
-                                            {item.isPublished === false && (
-                                                <Typography variant="body2" sx={{color: 'text.secondary'}} component="div">
-                                                    Status: Не опубликовано
-                                                </Typography>
-                                            )}
-                                        </CardContent>
-                                        <CardActions>
-                                            <Button size="small" to={`/tracks/${item._id}`} component={NavLink}>
-                                                Learn More
-                                            </Button>
-                                            {user && (
-                                                <Button size="small" onClick={() => onDelete(item._id)} color='warning'>
-                                                    Delete
-                                                </Button>
-                                            )}
-                                            {
-                                                item.isPublished === false && user?.role === "admin" && (
-                                                    <Button size="small" onClick={() => upDate(item._id)} color='warning'>
-                                                        Publish
+                                    <Box key={item._id} sx={{display: 'flex'}}>
+                                        {allAlbum && (
+                                            <Card sx={{
+                                                width: 305,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                            }}>
+                                                <CardMedia
+                                                    component="img"
+                                                    alt={item.title || "Artist Image"}
+                                                    width="100%"
+                                                    height="250px"
+                                                    image={image}
+                                                />
+                                                <CardContent sx={{flexGrow: 1}}>
+                                                    <Typography gutterBottom variant="h5" component="div">
+                                                        {item.title}
+                                                    </Typography>
+                                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                        Release: {item.releaseDate}
+                                                    </Typography>
+                                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                        Count of tracks: {item.trackCount}
+                                                    </Typography>
+                                                    {item.isPublished === false && (
+                                                        <Typography variant="body2" sx={{color: 'text.secondary'}} component="div">
+                                                            Status: Не опубликовано
+                                                        </Typography>
+                                                    )}
+                                                </CardContent>
+                                                <CardActions>
+                                                    <Button size="small" to={`/tracks/${item._id}`} component={NavLink}>
+                                                        Learn More
                                                     </Button>
-                                                )
-                                            }
-                                        </CardActions>
-                                    </Card>
+                                                    {deleteForAdmin && (
+                                                        <Button size="small"
+                                                                onClick={() => onDelete(item._id)}
+                                                                color='warning'
+                                                                disabled={deleteLoading}>
+                                                            Delete
+                                                        </Button>
+                                                    )}
+                                                    {
+                                                        item.isPublished === false && user?.role === "admin" && (
+                                                            <Button size="small" onClick={() => upDate(item._id)} color='warning'>
+                                                                Publish
+                                                            </Button>
+                                                        )
+                                                    }
+                                                </CardActions>
+                                            </Card>
+                                        )}
+                                    </Box>
                                 );
                             })
                         ) : (

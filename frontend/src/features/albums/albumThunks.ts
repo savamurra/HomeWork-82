@@ -54,4 +54,4 @@ export const publishAlbumThunks = createAsyncThunk<void,string>(
     async (id:string) => {
         await axiosApi.patch(`/albums/${id}/togglePublished`)
     }
-)
+);

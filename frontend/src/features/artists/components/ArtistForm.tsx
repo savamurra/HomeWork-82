@@ -71,7 +71,7 @@ const ArtistForm = () => {
                     color: "#041f4e",
                 }}
             >
-                Add new product
+                Add new Album
             </Typography>
             <form onSubmit={onSubmit}>
                 <Grid

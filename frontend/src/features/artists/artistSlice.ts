@@ -1,23 +1,29 @@
-import {Artist} from "../../types";
+import {Artist, GlobalError} from "../../types";
 import {createSlice} from "@reduxjs/toolkit";
-import {createArtistThunks, getArtistThunks} from "./artistThunks.ts";
+import {createArtistThunks, deleteArtistThunks, getArtistThunks} from "./artistThunks.ts";
 import {RootState} from "../../app/store.ts";
 
 interface ArtistSlice {
     artists: Artist[];
     isLoading: boolean;
     isCreate: boolean;
+    error: GlobalError | null;
+    isDelete: boolean;
 }
 
 const initialState: ArtistSlice = {
     artists: [],
     isLoading: false,
     isCreate: false,
+    error: null,
+    isDelete: false,
 };
 
 export const selectArtist = (state: RootState) => state.artists.artists;
 export const selectLoading = (state: RootState) => state.artists.isLoading;
 export const selectCreateLoading = (state: RootState) => state.artists.isCreate;
+export const selectDelete = (state: RootState) => state.artists.isDelete;
+
 export const artistSlice = createSlice({
     name: 'artists',
     initialState,
@@ -42,6 +48,17 @@ export const artistSlice = createSlice({
             })
             .addCase(createArtistThunks.rejected,(state) => {
                 state.isCreate = false;
+            })
+            .addCase(deleteArtistThunks.pending,(state) => {
+                state.isDelete = true;
+                state.error = null
+            })
+            .addCase(deleteArtistThunks.fulfilled,(state) => {
+                state.isDelete = false;
+            })
+            .addCase(deleteArtistThunks.rejected,(state,{payload: error}) => {
+                state.isDelete = false;
+                state.error = error || null
             });
     }
 });
