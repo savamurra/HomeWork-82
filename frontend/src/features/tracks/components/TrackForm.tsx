@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import { TrackMutation} from "../../../types";
+import {TrackMutation} from "../../../types";
 import {useSelector} from "react-redux";
 import {selectUser} from "../../users/userSlice.ts";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks.ts";
@@ -144,11 +144,15 @@ const TrackForm = () => {
                         value={form.artist}
                         onChange={inputChangeHandler}
                     >
-                        {artist.map((option) => (
-                            <MenuItem key={option._id} value={option._id}>
-                                {option.name}
-                            </MenuItem>
-                        ))}
+                        {artist
+                            .filter(option => option.isPublished || option.user === user?._id || user?.role === "admin")
+                            .map((option) => (
+                                <MenuItem key={option._id} value={option._id}>
+                                    {
+                                        option.name
+                                    }
+                                </MenuItem>
+                            ))}
                     </TextField>
                     <TextField
                         sx={{width: "100%"}}
@@ -161,7 +165,8 @@ const TrackForm = () => {
                         onChange={inputChangeHandler}
                     >
                         {album.results?.length > 0 ? (
-                            album.results.map((option) => (
+                            album.results.filter(option => option.isPublished || option.user === user?._id || user?.role === "admin")
+                                .map((option) => (
                                 <MenuItem key={option._id} value={option._id}>
                                     {option.title}
                                 </MenuItem>

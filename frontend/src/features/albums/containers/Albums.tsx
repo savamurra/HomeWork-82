@@ -49,6 +49,10 @@ const Artists = () => {
         }
     };
 
+    const filteredAlbums = albums.filter(item =>
+        item.isPublished || item.user === user?._id || user?.role === "admin"
+    );
+
     return (
         <>
             {loading ? (
@@ -61,16 +65,15 @@ const Artists = () => {
                         </Typography>
                     )}
                     <Box sx={{ display: 'flex', justifyContent: 'center', gap: 5 }}>
-                        {Array.isArray(albums) && albums.length > 0 ? (
-                            albums.map((item) => {
+                        {filteredAlbums.length > 0 ? (
+                            filteredAlbums.map((item) => {
 
                                 const image = item.image ? apiUrl + '/' + item.image :
                                     'https://mui.com/static/images/cards/contemplative-reptile.jpg';
-                                const allAlbum = user?.role === "admin" || user?.role === "user" && item.user === user._id || item.isPublished;
                                 const deleteForAdmin = user?.role === 'admin' || user?.role === "user" && item.user === user._id;
                                 return (
                                     <Box key={item._id} sx={{display: 'flex'}}>
-                                        {allAlbum && (
+
                                             <Card sx={{
                                                 width: 305,
                                                 display: 'flex',
@@ -87,14 +90,15 @@ const Artists = () => {
                                                     <Typography gutterBottom variant="h5" component="div">
                                                         {item.title}
                                                     </Typography>
-                                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                    <Typography variant="body2" sx={{color: 'text.secondary'}}>
                                                         Release: {item.releaseDate}
                                                     </Typography>
-                                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                    <Typography variant="body2" sx={{color: 'text.secondary'}}>
                                                         Count of tracks: {item.trackCount}
                                                     </Typography>
                                                     {item.isPublished === false && (
-                                                        <Typography variant="body2" sx={{color: 'text.secondary'}} component="div">
+                                                        <Typography variant="body2" sx={{color: 'text.secondary'}}
+                                                                    component="div">
                                                             Status: Не опубликовано
                                                         </Typography>
                                                     )}
@@ -113,19 +117,19 @@ const Artists = () => {
                                                     )}
                                                     {
                                                         item.isPublished === false && user?.role === "admin" && (
-                                                            <Button size="small" onClick={() => upDate(item._id)} color='warning'>
+                                                            <Button size="small" onClick={() => upDate(item._id)}
+                                                                    color='warning'>
                                                                 Publish
                                                             </Button>
                                                         )
                                                     }
                                                 </CardActions>
                                             </Card>
-                                        )}
                                     </Box>
                                 );
                             })
                         ) : (
-                            <Typography>No albums available.</Typography>
+                            <Typography>Unfortunately, the albums haven't been released yet.</Typography>
                         )}
                     </Box>
                 </>

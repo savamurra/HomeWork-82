@@ -76,6 +76,10 @@ const Tracks = () => {
         setYouTube(null);
     };
 
+    const filteredTracks = tracks.filter(item =>
+        item.isPublished || item.user === user?._id || user?.role === "admin"
+    );
+
     return (
         <>
             {loading ? (
@@ -94,13 +98,11 @@ const Tracks = () => {
                     )}
 
                     <Box sx={{display: "flex", gap: 5, justifyContent: "center"}}>
-                        {Array.isArray(tracks) && tracks.length > 0 ? (
-                            tracks.map((track) => {
-                                const allTrack = user?.role === "admin" || user?.role === "user" && track.user === user._id || track.isPublished;
+                        {filteredTracks.length > 0 ? (
+                        filteredTracks.map((track) => {
                                 const deleteForAdmin = user?.role === 'admin' || user?.role === "user" && track.user === user._id;
                                 return (
                                     <Box key={track._id} sx={{display: 'flex'}}>
-                                        {allTrack && (
                                             <Card sx={{
                                                 maxWidth: 345,
                                                 display: 'flex',
@@ -141,17 +143,17 @@ const Tracks = () => {
                                                     </Button>
                                                 )}
                                                 {track.isPublished === false && user?.role === "admin" && (
-                                                    <Button size="small" onClick={() => upDate(track._id)} color='warning'>
+                                                    <Button size="small" onClick={() => upDate(track._id)}
+                                                            color='warning'>
                                                         Publish
                                                     </Button>
                                                 )}
                                             </Card>
-                                        )}
                                     </Box>
                                 );
                             })
                         ) : (
-                            <Typography>No tracks available.</Typography>
+                            <Typography>Unfortunately, the tracks haven't been released yet.</Typography>
                         )}
 
                     </Box>

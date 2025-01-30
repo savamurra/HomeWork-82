@@ -44,19 +44,22 @@ const Artists = () => {
         }
     };
 
+    const filteredArtist = artists.filter(item =>
+        item.isPublished || item.user === user?._id || user?.role === "admin"
+    );
+
     return (
         <>
             {loading ? (
                 <Spinner/>
             ) : (
-                <Box sx={{display: 'flex', gap: 5}}>
-                    {artists.map((item) => {
+                <Box sx={{display: 'flex', gap: 5, justifyContent: "center"}}>
+                    {filteredArtist.length > 0 ? (
+                        filteredArtist.map((item) => {
                         const image = item.photo ? apiUrl + '/' + item.photo : 'https://mui.com/static/images/cards/contemplative-reptile.jpg';
-                        const allArtist = user?.role === "admin" || user?.role === "user" && item.user === user._id || item.isPublished;
                         const deleteForAdmin = user?.role === 'admin' || user?.role === "user" && item.user === user._id;
                         return (
                             <Box key={item._id} sx={{display: 'flex'}}>
-                                {allArtist && (
                                     <Card sx={{
                                         width: 305,
                                         display: 'flex',
@@ -104,10 +107,12 @@ const Artists = () => {
                                             }
                                         </CardActions>
                                     </Card>
-                                )}
                             </Box>
                         );
-                    })}
+                    })
+                    ) : (
+                        <Typography>Unfortunately, the artist haven't been released yet.</Typography>
+                    )}
                 </Box>)
             }
         </>

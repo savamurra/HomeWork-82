@@ -123,9 +123,13 @@ const AlbumForm = () => {
                         value={form.artist}
                         onChange={inputChangeHandler}
                     >
-                        {artist.map((option) => (
+                        {artist
+                            .filter(option => option.isPublished || option.user === user?._id || user?.role === 'admin')
+                            .map((option) => (
                             <MenuItem key={option._id} value={option._id}>
-                                {option.name}
+                                {
+                                    option.name
+                                }
                             </MenuItem>
                         ))}
                     </TextField>
