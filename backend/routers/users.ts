@@ -4,6 +4,7 @@ import User from "../models/User";
 import auth, {RequestWithUser} from "../middleware/auth";
 import config from "../config";
 import {OAuth2Client} from "google-auth-library";
+import {imagesUpload} from "../multer";
 
 const userRouter = express.Router();
 
@@ -33,14 +34,20 @@ userRouter.post('/google', async (req, res, next) => {
             return;
         }
 
+        if (!displayName) {
+            res.status(400).send({error: 'No enough displayName from Google'});
+            return;
+        }
+
         let user = await User.findOne({googleId: id});
 
         if (!user) {
             user = new User({
-                username: displayName,
+                username: email,
                 password: crypto.randomUUID(),
                 googleId: id,
-                avatar: avatar
+                avatar: avatar,
+                displayName: displayName,
             });
         }
 
@@ -48,16 +55,23 @@ userRouter.post('/google', async (req, res, next) => {
         await user.save();
         res.send({message: 'Login with Google success.', user})
 
-    } catch (e) {
-        next(e);
+    } catch (error) {
+        if (error instanceof Error.ValidationError) {
+            res.status(400).send(error);
+            return;
+        }
+
+        next(error);
     }
 });
 
-userRouter.post("/register", async (req, res, next) => {
+userRouter.post("/register", imagesUpload.single('avatar'), async (req, res, next) => {
     try {
         const user = new User({
             username: req.body.username,
             password: req.body.password,
+            displayName: req.body.displayName,
+            avatar: req.file ? 'images' + req.file.filename : null,
         });
 
         user.generateToken();
