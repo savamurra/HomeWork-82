@@ -2,8 +2,56 @@ import express from "express";
 import {Error} from "mongoose";
 import User from "../models/User";
 import auth, {RequestWithUser} from "../middleware/auth";
+import config from "../config";
+import {OAuth2Client} from "google-auth-library";
 
 const userRouter = express.Router();
+
+const client = new OAuth2Client(config.google.clientId);
+
+userRouter.post('/google', async (req, res, next) => {
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: req.body.credential,
+            audience: config.google.clientId,
+        })
+
+        const payload = ticket.getPayload();
+
+        if (!payload) {
+            res.status(400).send({error: 'Invalid credential. Google login error!'});
+            return
+        }
+
+        const email = payload.email;
+        const id = payload.sub;
+        const displayName = payload.name;
+        const avatar = payload.picture
+
+        if (!email) {
+            res.status(400).send({error: 'No enough data from Google'});
+            return;
+        }
+
+        let user = await User.findOne({googleId: id});
+
+        if (!user) {
+            user = new User({
+                username: displayName,
+                password: crypto.randomUUID(),
+                googleId: id,
+                avatar: avatar
+            });
+        }
+
+        user.generateToken();
+        await user.save();
+        res.send({message: 'Login with Google success.', user})
+
+    } catch (e) {
+        next(e);
+    }
+});
 
 userRouter.post("/register", async (req, res, next) => {
     try {

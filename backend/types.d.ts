@@ -37,4 +37,7 @@ export interface UserFields {
     token: string;
     role: string;
     isPublished: boolean;
+    displayName: string;
+    googleId: string;
+    avatar: string;
 }
