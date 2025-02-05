@@ -1,4 +1,4 @@
-import {Button, Menu, MenuItem} from '@mui/material';
+import {Button, CardMedia, Menu, MenuItem} from '@mui/material';
 import {User} from '../../../types';
 import {useState} from 'react';
 import {useAppDispatch} from '../../../app/hooks.ts';
@@ -6,6 +6,7 @@ import {unsetUser} from '../../../features/users/userSlice.ts';
 import {logout} from '../../../features/users/userThunks.ts';
 import {clearTrackHistory} from "../../../features/trackHistory/trackHistorySlice.ts";
 import {NavLink} from "react-router-dom";
+import {apiUrl} from "../../../globalConstants.ts";
 
 interface Props {
     user: User;
@@ -38,6 +39,17 @@ const UserMenu: React.FC<Props> = ({user}) => {
         dispatch(unsetUser());
         dispatch(clearTrackHistory());
     }
+
+    const updateAvatar = {...user}
+    const image = user.avatar;
+
+    if (image && image.startsWith('http')) {
+        updateAvatar.avatar = image;
+    } else if (image) {
+        updateAvatar.avatar = apiUrl + '/' + image;
+    } else {
+        updateAvatar.avatar = 'https://mui.com/static/images/cards/contemplative-reptile.jpg'; // Значение по умолчанию
+    }
     return (
         <>
             <Button
@@ -61,15 +73,19 @@ const UserMenu: React.FC<Props> = ({user}) => {
                 onClick={handleClick}
                 color='inherit'
             >
-                Hello, {user.username}!
+                Hello, {user.displayName}!
+                <CardMedia
+                    component="img"
+                    alt={user.username || "Artist Image"}
+                    image={updateAvatar.avatar}
+                    sx={{width: 30, height: 30, borderRadius: '50%', marginLeft: 1}}
+                />
             </Button>
             <Menu
                 anchorEl={anchorEl}
                 keepMounted
                 open={Boolean(anchorEl)}
                 onClose={handleClose}>
-                <MenuItem>Profile</MenuItem>
-                <MenuItem>My account</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
         </>

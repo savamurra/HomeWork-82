@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { RegisterMutation } from '../../types';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -10,23 +10,35 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useAppDispatch, useAppSelector } from '../../app/hooks.ts';
-import { selectRegisterError } from './userSlice.ts';
+import {clearRegisterError, selectRegisterError} from './userSlice.ts';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { register } from './userThunks.ts';
 import {IconButton, InputAdornment} from "@mui/material";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
+import * as React from "react";
+import FileInput from "../../components/FileInput/FileInput.tsx";
 
 
 const RegisterPage = () => {
   const [form, setForm] = useState<RegisterMutation>({
     username: '',
+    displayName: '',
     password: '',
+    avatar: null as File | null,
   });
 
   const dispatch = useAppDispatch();
   const registerError = useAppSelector(selectRegisterError);
   const navigate = useNavigate();
   const [password, setPassword] = useState<boolean>(false);
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearRegisterError());
+    };
+  }, [dispatch]);
+
+  console.log(form)
 
 
   const inputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +55,18 @@ const RegisterPage = () => {
     } catch (e) {
       console.log(e);
     }
-  }
+  };
+
+  const fileEventChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {name, files} = e.target;
+
+    if (files) {
+      setForm((prevState) => ({
+        ...prevState,
+        [name]: files[0] || null,
+      }));
+    }
+  };
 
   const getFieldError = (fieldName: string) => {
     try {
@@ -87,6 +110,25 @@ const RegisterPage = () => {
                 onChange={inputChange}
                 error={Boolean(getFieldError('username'))}
                 helperText={getFieldError('username')}
+              />
+            </Grid>
+            <Grid size={12}>
+              <TextField
+                  fullWidth
+                  id="displayName"
+                  label="Display Name"
+                  name="displayName"
+                  value={form.displayName}
+                  onChange={inputChange}
+                  error={Boolean(getFieldError('displayName'))}
+                  helperText={getFieldError('displayName')}
+              />
+            </Grid>
+            <Grid size={12}>
+              <FileInput
+                  name="avatar"
+                  label="Avatar"
+                  onGetFile={fileEventChangeHandler}
               />
             </Grid>
             <Grid>

@@ -67,6 +67,8 @@ export interface TrackResponse {
 
 export interface RegisterMutation {
     username: string;
+    displayName: string;
+    avatar: File | null;
     password: string;
 }
 
@@ -80,6 +82,8 @@ export interface User {
     username: string;
     token: string;
     role: string;
+    avatar: string;
+    displayName: string;
 }
 
 export interface TrackHistoryFields {
